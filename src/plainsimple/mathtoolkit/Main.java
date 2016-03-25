@@ -1,3 +1,5 @@
+import com.sun.org.apache.xpath.internal.operations.Div;
+
 import java.util.*;
 
 /**
@@ -5,13 +7,21 @@ import java.util.*;
  */
 public class Main {
 
+    private static final int ADD_OPERATION = 1;
+    private static final int SUBTRACT_OPERATION = 2;
+    private static final int MULTIPLY_OPERATION = 3;
+    private static final int DIVIDE_OPERATION = 4;
+    private static final int EXPONENT_OPERATION = 5;
 
     public static void main(String[] args) {
         String equation = "(2+4*(2+3))*(6*8)"; // answer: 1056
         // list of regex patterns to look for/match
-        List<String> operators = new ArrayList<String>();
-        operators.add("+");
-        operators.add("-");
+        HashMap<String, Integer> operations = new HashMap<>();
+        operations.put("+", ADD_OPERATION);
+        operations.put("-", SUBTRACT_OPERATION);
+        operations.put("*", MULTIPLY_OPERATION);
+        operations.put("/", DIVIDE_OPERATION);
+        operations.put("^", EXPONENT_OPERATION);
         evaluateExpression(equation);
     }
 
@@ -38,7 +48,9 @@ public class Main {
             } else if (equation.charAt(i) == ' ') { // ignore spaces
 
             } else { // parse out numbers and operators
-                System.out.println("Token is: " + getToken(equation, i));
+                String token = getToken(equation, i);
+                System.out.println("Token is: " + token);
+                i += token.length() - 1;
             }
         }
     }
@@ -50,7 +62,7 @@ public class Main {
         // establish whether we will be parsing a number or not
         boolean is_number = isPartOfNumber(equation.charAt(startIndex));
         for (int j = startIndex; j < equation.length(); j++) {
-            if (isPartOfNumber(equation.charAt(j)) == is_number) { // continue collecting token
+            if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
                 token += equation.charAt(j);
             } else {
                 return token;
@@ -62,10 +74,5 @@ public class Main {
     // returns whether char is a digit or decimal point
     private static boolean isPartOfNumber(char c) {
         return (c >= '0' && c <= '9') || c == '.';
-    }
-    // returns result of stuff within least deep parenthesis
-    private static double evaluateParenthesis(String expression) {
-        System.out.println(expression);
-        return 0;
     }
 }
