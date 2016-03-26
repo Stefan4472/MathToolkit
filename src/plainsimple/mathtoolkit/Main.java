@@ -44,10 +44,16 @@ public class Main {
                         closings++;
                     }
                 }
-                String binding_operation = tokens.pollLast();
-                String current_result = evaluateTokens(tokens, operations);
-                i += j;
-                return applyOperation(current_result, binding_operation, evaluateExpression(equation.substring(i + 1, i + j), operations), operations);
+                if (tokens.size() == 0) {
+                    return evaluateExpression(equation.substring(i + 1, i + j), operations);
+                } else {
+                    String binding_operation = tokens.pollLast();
+                    String current_result = evaluateTokens(tokens, operations);
+                    System.out.println("Current Result = " + current_result + " and binding operation = " + binding_operation);
+                    //i += j;
+                    // todo: might not go to end of equation
+                    return applyOperation(current_result, binding_operation, evaluateExpression(equation.substring(i + 1, i + j), operations), operations);
+                }
             } else if (equation.charAt(i) == ' ') { // ignore spaces
 
             } else { // parse out numbers and operators
@@ -60,12 +66,20 @@ public class Main {
     }
 
     private static String evaluateTokens(LinkedList<String> tokens, HashMap<String, Integer> operations) {
-        return applyOperation(tokens.get(0), tokens.get(1), tokens.get(2), operations);
+        // should be in form:
+        // number, operator, number, operator, number, etc.
+        while (tokens.size() > 1) {
+            System.out.println("In loop and Tokens.size() = " + tokens.size());
+            tokens.addFirst(applyOperation(tokens.pollFirst(), tokens.pollFirst(), tokens.pollFirst(), operations));
+            System.out.println("Operation applied and Tokens.size() = " + tokens.size());
+        }
+        System.out.println("Result is " + tokens.getFirst());
+        return tokens.getFirst();
     }
 
     private static String applyOperation(String token1, String operation, String token2, HashMap<String, Integer> operations) {
         double num_1 = 0, num_2 = 0;
-        try {
+        try { // todo: check constants
             num_1 = Double.parseDouble(token1);
             num_2 = Double.parseDouble(token2);
         } catch (NumberFormatException e) {
