@@ -14,7 +14,7 @@ public class Main {
     private static final int EXPONENT_OPERATION = 5;
 
     public static void main(String[] args) {
-        String equation = "(2+4*(2+3))*(6*8)"; // answer: 1056
+        String equation = "5+(2+4*(2+3))*(6*8)"; // answer: 1061
         // list of regex patterns to look for/match
         HashMap<String, Integer> operations = new HashMap<>();
         operations.put("+", ADD_OPERATION);
@@ -50,9 +50,9 @@ public class Main {
                     String binding_operation = tokens.pollLast();
                     String current_result = evaluateTokens(tokens, operations);
                     System.out.println("Current Result = " + current_result + " and binding operation = " + binding_operation);
-                    //i += j;
                     // todo: might not go to end of equation
-                    return applyOperation(current_result, binding_operation, evaluateExpression(equation.substring(i + 1, i + j), operations), operations);
+                    applyOperation(current_result, binding_operation, evaluateExpression(equation.substring(i + 1, i + j), operations), operations);
+                    i += j;
                 }
             } else if (equation.charAt(i) == ' ') { // ignore spaces
 
@@ -69,9 +69,18 @@ public class Main {
         // should be in form:
         // number, operator, number, operator, number, etc.
         while (tokens.size() > 1) {
-            System.out.println("In loop and Tokens.size() = " + tokens.size());
-            tokens.addFirst(applyOperation(tokens.pollFirst(), tokens.pollFirst(), tokens.pollFirst(), operations));
-            System.out.println("Operation applied and Tokens.size() = " + tokens.size());
+            // order of operations
+            int operation_index = 1;
+            if (tokens.contains("*")) { // todo: ^
+                operation_index = tokens.indexOf("*");
+            } else if (tokens.contains("/")) {
+                operation_index = tokens.indexOf("/");
+            } else if (tokens.contains("+")) {
+                operation_index = tokens.indexOf("+");
+            } else if (tokens.contains("-")) {
+                operation_index = tokens.indexOf("-");
+            } // todo: else: invalid operator
+            tokens.add(operation_index - 1, applyOperation(tokens.remove(operation_index - 1), tokens.remove(operation_index - 1), tokens.remove(operation_index - 1), operations));
         }
         System.out.println("Result is " + tokens.getFirst());
         return tokens.getFirst();
