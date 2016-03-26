@@ -22,7 +22,7 @@ public class Main {
         operations.put("*", MULTIPLY_OPERATION);
         operations.put("/", DIVIDE_OPERATION);
         operations.put("^", EXPONENT_OPERATION);
-        evaluateExpression(equation);
+        System.out.println(evaluateExpression(equation, operations));
     }
 
     // moves from left to right, evaluating expressions
@@ -30,8 +30,9 @@ public class Main {
     // and calls evaluateParenthesis() on the expression inside the parenthesis
     // The evaluated amount in the parenthesis is then plugged into the equation
     // Runs to the end of the equation
-    private static void evaluateExpression(String equation) {
+    private static String evaluateExpression(String equation, HashMap<String, Integer> operations) {
         System.out.println(equation);
+        LinkedList<String> tokens = new LinkedList<>();
         for (int i = 0; i < equation.length(); i++) {
             if (equation.charAt(i) == '(') { // found a parenthesis - look for the whole expression inside
                 int openings = 1, closings = 0, j = 0;
@@ -43,15 +44,46 @@ public class Main {
                         closings++;
                     }
                 }
-                evaluateExpression(equation.substring(i + 1, i + j));
+                String binding_operation = tokens.pollLast();
+                String current_result = evaluateTokens(tokens, operations);
                 i += j;
+                return applyOperation(current_result, binding_operation, evaluateExpression(equation.substring(i + 1, i + j), operations), operations);
             } else if (equation.charAt(i) == ' ') { // ignore spaces
 
             } else { // parse out numbers and operators
-                String token = getToken(equation, i);
-                System.out.println("Token is: " + token);
-                i += token.length() - 1;
+                tokens.add(getToken(equation, i));
+                System.out.println("Token is: " + tokens.getLast());
+                i += tokens.getLast().length() - 1;
             }
+        }
+        return evaluateTokens(tokens, operations);
+    }
+
+    private static String evaluateTokens(LinkedList<String> tokens, HashMap<String, Integer> operations) {
+        return applyOperation(tokens.get(0), tokens.get(1), tokens.get(2), operations);
+    }
+
+    private static String applyOperation(String token1, String operation, String token2, HashMap<String, Integer> operations) {
+        double num_1 = 0, num_2 = 0;
+        try {
+            num_1 = Double.parseDouble(token1);
+            num_2 = Double.parseDouble(token2);
+        } catch (NumberFormatException e) {
+            throw e;
+        }
+        switch (operations.get(operation)) {
+            case ADD_OPERATION:
+                return Double.toString(num_1 + num_2);
+            case SUBTRACT_OPERATION:
+                return Double.toString(num_1 - num_2);
+            case MULTIPLY_OPERATION:
+                return Double.toString(num_1 * num_2);
+            case DIVIDE_OPERATION:
+                return Double.toString(num_1 / num_2);
+            case EXPONENT_OPERATION:
+                return Double.toString(Math.pow(num_1, num_2));
+            default:
+                return "0";
         }
     }
 
