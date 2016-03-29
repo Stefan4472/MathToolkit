@@ -1,5 +1,3 @@
-import com.sun.org.apache.xpath.internal.operations.Div;
-
 import java.util.*;
 
 /**
@@ -32,7 +30,6 @@ public class Main {
     // Runs to the end of the equation
     private static String evaluateExpression(String equation, HashMap<String, Integer> operations) {
         System.out.println(equation);
-        LinkedList<String> tokens = new LinkedList<>();
         for (int i = 0; i < equation.length(); i++) {
             if (equation.charAt(i) == '(') { // found a parenthesis - look for the whole expression inside
                 int openings = 1, closings = 0, j = 0;
@@ -44,23 +41,24 @@ public class Main {
                         closings++;
                     }
                 }
-                if (tokens.size() == 0) {
-                    return evaluateExpression(equation.substring(i + 1, i + j), operations);
-                } else {
-                    String binding_operation = tokens.pollLast();
-                    String current_result = evaluateTokens(tokens, operations);
-                    System.out.println("Current Result = " + current_result + " and binding operation = " + binding_operation);
-                    // todo: might not go to end of equation
-                    applyOperation(current_result, binding_operation, evaluateExpression(equation.substring(i + 1, i + j), operations), operations);
-                    i += j;
-                }
+                // parenthesis starts at i and ends at i + j
+                equation = equation.substring(0, i) + evaluateExpression(equation.substring(i + 1, i + j), operations) + equation.substring(i + j + 1);
+                i += j;
             } else if (equation.charAt(i) == ' ') { // ignore spaces
 
             } else { // parse out numbers and operators
-                tokens.add(getToken(equation, i));
-                System.out.println("Token is: " + tokens.getLast());
-                i += tokens.getLast().length() - 1;
+
             }
+        }
+        return reduceExpression(equation, operations);
+    }
+
+    private static String reduceExpression(String expression, HashMap<String, Integer> operations) {
+        LinkedList<String> tokens = new LinkedList<>();
+        for (int i = 0; i < expression.length(); i++) {
+            String next_token = getToken(expression, i);
+            i += next_token.length() - 1;
+            tokens.add(next_token);
         }
         return evaluateTokens(tokens, operations);
     }
