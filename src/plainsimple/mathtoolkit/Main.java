@@ -1,3 +1,5 @@
+import com.sun.org.apache.xpath.internal.operations.Div;
+
 import java.util.*;
 
 /**
@@ -41,15 +43,11 @@ public class Main {
                         closings++;
                     }
                 }
-                // parenthesis starts at i and ends at i + j
+                // parenthesis starts at i and ends at i + j 
                 equation = equation.substring(0, i) + evaluateExpression(equation.substring(i + 1, i + j), operations) + equation.substring(i + j + 1);
-                i += j;
-            } else if (equation.charAt(i) == ' ') { // ignore spaces
-
-            } else { // parse out numbers and operators
-
-            }
+            } 
         }
+        System.out.println("Equation is now " + equation);
         return reduceExpression(equation, operations);
     }
 
