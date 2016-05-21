@@ -1,9 +1,4 @@
-package plainsimple;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by lhscompsci on 3/31/16.
@@ -89,22 +84,48 @@ public class EquationParser {
     }
 
     // takes a list of tokens and applies operations using order of operations
-    private String evaluateTokens(LinkedList<String> tokens) {
-        // should be in form:
-        // number, operator, number, operator, number, etc.
+    private String evaluateTokens(LinkedList<String> tokens) throws ArithmeticException {
         while (tokens.size() > 1) {
-            // order of operations
-            int operation_index = 1;
-            if (tokens.contains("*")) { // todo: ^
-                operation_index = tokens.indexOf("*");
-            } else if (tokens.contains("/")) {
-                operation_index = tokens.indexOf("/");
-            } else if (tokens.contains("+")) {
-                operation_index = tokens.indexOf("+");
-            } else if (tokens.contains("-")) {
-                operation_index = tokens.indexOf("-");
-            } // todo: else: invalid operator
-            tokens.add(operation_index - 1, applyOperation(tokens.remove(operation_index - 1), tokens.remove(operation_index - 1), tokens.remove(operation_index - 1)));
+            System.out.println("Tokens are " + ListUtil.toString(tokens));
+            // handle case of first token being negative
+            if (tokens.get(0).equals("-")) {
+                tokens.set(1, "-" + tokens.get(1));
+                tokens.remove(0);
+            }
+            if (tokens.size() == 1) {
+                return tokens.getFirst();
+            } else {
+                // order of operations
+                int operation_index = 1;
+                if (tokens.contains("*")) { // todo: ^
+                    operation_index = tokens.indexOf("*");
+                } else if (tokens.contains("/")) {
+                    operation_index = tokens.indexOf("/");
+                } else if (tokens.contains("+")) {
+                    operation_index = tokens.indexOf("+");
+                } else if (tokens.contains("^")) {
+                    operation_index = tokens.indexOf("^");
+                } else if (tokens.contains("-")) {
+                    operation_index = tokens.indexOf("-");
+                } else {
+                    throw new ArithmeticException("Expression does not contain a valid operator");
+                }
+                System.out.println("Operation index is " + operation_index);
+                System.out.println("Next token is " + tokens.get(operation_index + 1));
+                // look for negative sign after first operation found:
+                // remove negative sign and add negative sign to beginning of next-next token
+                if (tokens.get(operation_index + 1).equals("-")) {
+                    System.out.println("Negative Found");
+                    tokens.set(operation_index + 1, "-" + tokens.get(operation_index + 2));
+                    tokens.remove(operation_index + 2);
+                }
+                System.out.println("Tokens are now " + ListUtil.toString(tokens));
+                String result = applyOperation(tokens.remove(operation_index - 1), tokens.remove(operation_index - 1), tokens.remove(operation_index - 1));
+                System.out.println("Result is " + result);
+                // should be in form:
+                // number, operator, number, operator, number, etc.
+                tokens.add(operation_index - 1, result);
+            }
         }
         System.out.println("Result is " + tokens.getFirst());
         return tokens.getFirst();
@@ -113,6 +134,15 @@ public class EquationParser {
     // applies the given operation to two tokens
     private String applyOperation(String token1, String operation, String token2) {
         MathObject obj_1, obj_2;
+        boolean obj1_negative = false, obj2_negative = false;
+        if (token1.charAt(0) == '-') { // todo: handle negatives
+            token1 = token1.substring(1);
+            obj1_negative = true;
+        }
+        if (token2.charAt(0) == '-') {
+            token2 = token2.substring(1);
+            obj2_negative = true;
+        }
         if (variables.containsKey(token1)) {
             obj_1 = variables.get(token1);
         } else {
@@ -123,6 +153,12 @@ public class EquationParser {
         } else {
             obj_2 = MathObject.parseMathObject(token2);
         }
+        if (obj1_negative) {
+            obj_1 = obj_1.negative();
+        }
+        if (obj2_negative) {
+            obj_2 = obj_2.negative();
+        }
         if (operation.equals("+")) {
             return (obj_1.add(obj_2)).toString();
         } else if (operation.equals("-")) {
@@ -131,10 +167,10 @@ public class EquationParser {
             return (obj_1.multiply(obj_2)).toString();
         } else if (operation.equals("/")) {
             return (obj_1.divide(obj_2)).toString();
-        } else if (operation.equals("^")) {
+        } else if (operation.equals("^")) { // todo: check if this is correct: 3^-1 = 0 ??
             return (obj_1.powerOf(obj_2)).toString();
         } else { // todo: throw exception?
-            System.out.println("Invalid Operator");
+            System.out.println("Invalid Operator " + operation);
             return "";
         }
     }
@@ -201,11 +237,14 @@ public class EquationParser {
     // if lookBehind is true, it will look backwards (the token however will not be backwards)
     // if lookBehind is false, it will look forwards =
     private String getToken(String equation, int startIndex) { // todo: negative numbers
-        String token = "";
+        String token = Character.toString(equation.charAt(startIndex));
         // establish whether we will be parsing a number or not
         boolean is_number = isPartOfNumber(equation.charAt(startIndex));
-        for (int j = startIndex; j < equation.length(); j++) {
-            if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
+        for (int j = startIndex + 1; j < equation.length(); j++) {
+            if (equation.charAt(j) == '+' || equation.charAt(j) == '-' || equation.charAt(j) == '*'
+                    || equation.charAt(j) == '/' || equation.charAt(j) == '*') {
+                return token; // stop if an operator has been found
+            } else if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
                 token += equation.charAt(j);
                 if (functions.contains(token)) {
                     return token;
@@ -219,12 +258,15 @@ public class EquationParser {
 
     // starting at startIndex of equation, looks behind and parses out
     // the previous complete token and returns it
-    private String getPreviousToken(String equation, int startIndex) {
-        String token = "";
+    private String getPreviousToken(String equation, int startIndex) { // todo: return instantly when you hit an operator
+        String token = Character.toString(equation.charAt(startIndex));
         // establish whether we will be parsing a number or not
         boolean is_number = isPartOfNumber(equation.charAt(startIndex));
-        for (int j = startIndex; j >= 0; j--) {
-            if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
+        for (int j = startIndex - 1; j >= 0; j--) {
+            if (equation.charAt(j) == '+' || equation.charAt(j) == '-' || equation.charAt(j) == '*'
+                    || equation.charAt(j) == '/' || equation.charAt(j) == '*') {
+                return token; // stop if an operator has been found
+            } else if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
                 token = equation.charAt(j) + token;
                 if (functions.contains(token)) { // todo
                     return token;

@@ -1,4 +1,3 @@
-package plainsimple;
 /**
  * Generic MathObject, representing any object that can be used in the program.
  * Contains abstract methods for child classes to implement a core of operations
@@ -22,7 +21,7 @@ public abstract class MathObject {
         try {
             return Number.parseNumber(s);
         } catch (NumberFormatException e) {}
-        throw new NumberFormatException("String cannot be parsed");
+        throw new NumberFormatException("String " + s + " cannot be parsed");
     }
 
     // adds MathObjects and returns result as a new MathObject
@@ -42,6 +41,9 @@ public abstract class MathObject {
 
     // todo: other operations, exponent
     public abstract MathObject powerOf(MathObject exponent);
+
+    // returns nagative of MathObject as new MathObject
+    public abstract MathObject negative();
 
     // adds two MathObjects
     public static MathObject add(MathObject obj1, MathObject obj2) {

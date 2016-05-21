@@ -1,4 +1,3 @@
-package plainsimple;
 /**
  * Allows for parsing between Strings and values and keeps track of significant figures
  */
@@ -118,6 +117,26 @@ public class Number extends MathObject {
         boolean result_isInt = (isInt() && toExponent_cast.isInt() ? true : false);
         return new Number(result, result_isInt);
     }
+
+    @Override
+    public MathObject negative() {
+        return new Number(getValue() * -1.0, isInt());
+    }
+
+    public MathObject square() {
+        return multiply(this);
+    }
+
+    public MathObject sqrt() {
+        double result = Math.sqrt(this.getValue());
+        // check if result is an int
+        if (result == (int) result) {
+            return new Number(result, true);
+        } else {
+            return new Number(result, false);
+        }
+    }
+
     @Override
     public String toString() {
         if (isInt) {
