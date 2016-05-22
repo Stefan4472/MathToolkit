@@ -32,6 +32,19 @@ public class Vector extends MathObject {
         return new_vector;
     }
 
+    public static Vector parseVector(String toParse) throws NumberFormatException {
+        // handle case string is in the form "Vector()"
+        if (toParse.startsWith("Vector(") && toParse.endsWith(")")) {
+            toParse = toParse.substring(toParse.indexOf("(") + 1, toParse.indexOf(")"));
+        }
+        Vector parsed = new Vector();
+        while (toParse.contains(",")) {
+            parsed.addElement(Number.parseNumber(toParse.substring(0, toParse.indexOf(","))));
+        }
+        parsed.addElement(Number.parseNumber(toParse));
+        return parsed;
+    }
+
     public void addElement(MathObject element) {
          elements.add((Number) element);
     }

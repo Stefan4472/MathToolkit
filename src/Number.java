@@ -39,6 +39,10 @@ public class Number extends MathObject {
         boolean decimal_found = false;
         boolean negative_found = false;
         double value = 0;
+        // handle case string is in the form "Number()"
+        if (s.startsWith("Number(") && s.endsWith(")")) {
+            s = s.substring(s.indexOf("(") + 1, s.indexOf(")"));
+        }
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) >= '0' && s.charAt(i) <= '9') {
                 if (!decimal_found) { // before decimal

@@ -17,11 +17,23 @@ public abstract class MathObject {
         this.id = "";
     }
 
-    public static MathObject parseMathObject(String s) throws NumberFormatException {
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public static MathObject parseMathObject(String toParse) throws NumberFormatException {
         try {
-            return Number.parseNumber(s);
+            return Number.parseNumber(toParse);
         } catch (NumberFormatException e) {}
-        throw new NumberFormatException("String " + s + " cannot be parsed");
+        try {
+            return Vector.parseVector(toParse);
+        } catch(NumberFormatException e) {}
+        // todo: vector parsing method
+        throw new NumberFormatException("String " + toParse + " cannot be parsed");
     }
 
     // adds MathObjects and returns result as a new MathObject

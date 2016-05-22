@@ -10,11 +10,13 @@ public class EquationParser {
     // map of stored variables with variable ID as key and MathObject as value
     private HashMap<String, MathObject> variables;
 
-    // construct with a hashmap containing stored variables
-    public EquationParser(HashMap<String, MathObject> variables) {
-        this.variables = variables;
+    // default constructor
+    // variables can be set using the setVariables method
+    public EquationParser() {
+        variables = new HashMap<>();
         functions = createFunctionsList();
     }
+
     // initializes and returns an ArrayList containing the functions
     private static ArrayList<String> createFunctionsList() {
         // list of function keywords that bind to actual functions
@@ -33,6 +35,10 @@ public class EquationParser {
         functions.add("cot");
         functions.add("acot");
         return functions;
+    }
+
+    public void setVariables(HashMap<String, MathObject> variables) {
+        this.variables = variables;
     }
 
     // moves from left to right, evaluating expressions
