@@ -39,19 +39,18 @@ public class Main {
         }
         if (save_file != null) {
             // attempt to read in MathObjects from save file
-            HashMap<String, MathObject> variables = new HashMap<>();
-            if (PersistentData.importMathObjects(save_file, variables)) {
-                System.out.println(variables.size() + " variables imported successfully from " + save_file.getPath());
-                parser.setVariables(variables);
+            if (PersistentData.importMathObjects(save_file, parser)) {
+                System.out.println(parser.getVariables().size() + " variables imported successfully from " + save_file.getPath());
             } else {
                 System.out.println("Error importing variables from " + save_file.getPath() + ". The file did not exist or could not be opened");
             }
         }
+        // todo: Look at arithmetic issues, check lots of digits being created
         //String equation = "5+(2+4*(2+3))*(6*8)"; // answer: 1061
         //String equation = "5+3*cos(5-5)+3*sin(zero)";
         //String equation = "3^(1+-2)";
         //String equation = "-5*-2";
-        //String equation = "a = Vector(1,2,3)";
-        //System.out.println(parser.evaluateExpression(equation)); // todo: make non-static: variables can be changed
+        String equation = "b + 4";
+        System.out.println(parser.evaluateExpression(equation)); // todo: make non-static: variables can be changed
     }
 }

@@ -43,6 +43,10 @@ public class EquationParser {
         this.variables = variables;
     }
 
+    public HashMap<String, MathObject> getVariables() {
+        return variables;
+    }
+
     // moves from left to right, evaluating expressions
     // when it runs into a parenthesis, it looks for the whole parenthesis
     // and calls evaluateExpression() on the expression inside the parenthesis
@@ -59,8 +63,7 @@ public class EquationParser {
                 variables.put(variable, MathObject.parseMathObject(result));
                 System.out.println(result + " put in variable " + variable);
                 return result;
-            }
-            if (equation.charAt(i) == '(') { // found a parenthesis - look for the whole expression inside
+            } else if (equation.charAt(i) == '(') { // found a parenthesis - look for the whole expression inside
                 // parenthesis will start at i and end at i + j
                 int openings = 1, closings = 0, j = 0;
                 while (openings != closings) {
@@ -148,7 +151,10 @@ public class EquationParser {
                 tokens.add(operation_index - 1, result);
             }
         }
-        System.out.println("Result is " + tokens.getFirst());
+        // if single variable, return value of variable
+        if (variables.containsKey(tokens.getFirst())) {
+            return variables.get(tokens.getFirst()).toString();
+        }
         return tokens.getFirst();
     }
 

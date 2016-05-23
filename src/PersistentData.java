@@ -33,16 +33,14 @@ public class PersistentData {
         }
     }
 
-    // reads in MathObjects from specified file and puts them in hashmap
-    public static boolean importMathObjects(File file, HashMap<String, MathObject> variables) {
+    // reads in MathObjects from specified file and puts them in hashmap of given EquationParser
+    public static boolean importMathObjects(File file, EquationParser parser) {
         String line = "";
-        EquationParser parser = new EquationParser();
         try {
             FileReader file_reader = new FileReader(file);
             BufferedReader buffered_reader = new BufferedReader(file_reader);
             while((line = buffered_reader.readLine()) != null) {
-                MathObject parsed_variable = MathObject.parseMathObject(parser.evaluateExpression(line));
-                variables.put(parsed_variable.getId(), parsed_variable);
+                parser.evaluateExpression(line);
             }
             buffered_reader.close();
             return true;

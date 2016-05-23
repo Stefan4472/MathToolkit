@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -9,6 +10,14 @@ public class ListUtil {
         String as_string = "";
         for (String element : list) {
             as_string += element + " ";
+        }
+        return as_string;
+    }
+
+    public static String toString(HashMap<String, MathObject> hashMap) {
+        String as_string = "";
+        for (String key : hashMap.keySet()) {
+            as_string += key + ": " + hashMap.get(key).toString() + "\n";
         }
         return as_string;
     }
