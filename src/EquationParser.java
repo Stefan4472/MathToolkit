@@ -97,9 +97,11 @@ public class EquationParser {
         LinkedList<String> tokens = new LinkedList<>();
         for (int i = 0; i < expression.length(); i++) {
             String next_token = getToken(expression, i);
+            System.out.println("Next token is " + next_token);
             // handle vectors and numbers: put whole thing into a token
             if (next_token.equals("Vector") || next_token.equals("Number")) {
                 next_token += expression.substring(expression.indexOf("(", i), expression.indexOf(")", i) + 1);
+                System.out.println("Grabbed token " + next_token);
             }
             i += next_token.length() - 1;
             tokens.add(next_token);
