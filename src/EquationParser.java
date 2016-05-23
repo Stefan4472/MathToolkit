@@ -62,7 +62,7 @@ public class EquationParser {
                 String result = evaluateExpression(equation.substring(equation.indexOf('=') + 1));
                 variables.put(variable, MathObject.parseMathObject(result));
                 System.out.println(result + " put in variable " + variable);
-                return result;
+                return variable + " -> " + result;
             } else if (equation.charAt(i) == '(') { // found a parenthesis - look for the whole expression inside
                 // parenthesis will start at i and end at i + j
                 int openings = 1, closings = 0, j = 0;
@@ -101,7 +101,6 @@ public class EquationParser {
             // handle vectors and numbers: put whole thing into a token
             if (next_token.equals("Vector") || next_token.equals("Number")) {
                 next_token += expression.substring(expression.indexOf("(", i), expression.indexOf(")", i) + 1);
-                System.out.println("Grabbed token " + next_token);
             }
             i += next_token.length() - 1;
             tokens.add(next_token);
@@ -322,6 +321,6 @@ public class EquationParser {
 
     // returns whether char is one of the recognized operator characters
     private static boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/' || c == '*' || c == '=';
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '=';
     }
 }

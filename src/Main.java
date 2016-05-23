@@ -13,19 +13,23 @@ public class Main {
     public static void main(String[] args) {
         EquationParser parser = new EquationParser();
         System.out.println("Welcome to the Math Toolkit!\n");
-        importSavedVariables(parser);
+        File save_file = importSavedVariables(parser);
         System.out.println("Waiting on expression or command...");
         while (true) {
             String user_input = scanner.nextLine();
             if (user_input.startsWith("help")) {
 
             } else if (user_input.startsWith("exit")) {
-
+                // write variables to save file
+                if (saveVariables) {
+                    PersistentData.exportMathObjects(save_file, parser);
+                }
             } else if (user_input.startsWith("config")) {
 
             } else {
                 String result = parser.evaluateExpression(user_input);
                 System.out.print(">> " + result + "\n");
+
             }
         }
         // todo: Look at arithmetic issues, check lots of digits being created
@@ -40,7 +44,7 @@ public class Main {
     // check preferences to see if a save file for variables has been set
     // if so, attempt to read in the variables
     // if not, try to set up a file
-    private static void importSavedVariables(EquationParser toInitialize) {
+    private static File importSavedVariables(EquationParser toInitialize) {
         File save_file = PersistentData.getStorageFilePath();
         if (save_file == null) {
             // set up variable storage
@@ -70,6 +74,7 @@ public class Main {
                 }
             }
         }
+        return save_file;
     }
 
     // prompts user to create or set a file to save variables to

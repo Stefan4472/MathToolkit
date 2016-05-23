@@ -54,10 +54,11 @@ public class PersistentData {
     }
 
     // writes MathObjects to given file
-    public static boolean exportMathObjects(File file, HashMap<String, MathObject> variables) {
+    public static boolean exportMathObjects(File file, EquationParser parser) {
         try {
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            HashMap<String, MathObject> variables = parser.getVariables();
             for (String key : variables.keySet()) {
                 MathObject variable = variables.get(key);
                 bufferedWriter.write(variable.getId() + "=" + variable.toString() + "\n");
