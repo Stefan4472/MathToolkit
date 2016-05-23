@@ -40,6 +40,7 @@ public class Vector extends MathObject {
         Vector parsed = new Vector();
         while (toParse.contains(",")) {
             parsed.addElement(Number.parseNumber(toParse.substring(0, toParse.indexOf(","))));
+            toParse = toParse.substring(toParse.indexOf(",") + 1);
         }
         parsed.addElement(Number.parseNumber(toParse));
         return parsed;

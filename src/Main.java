@@ -49,8 +49,9 @@ public class Main {
         }
         //String equation = "5+(2+4*(2+3))*(6*8)"; // answer: 1061
         //String equation = "5+3*cos(5-5)+3*sin(zero)";
-        String equation = "3^(1+-2)";
+        //String equation = "3^(1+-2)";
         //String equation = "-5*-2";
-        System.out.println(parser.evaluateExpression(equation)); // todo: make non-static: variables can be changed
+        //String equation = "a = Vector(1,2,3)";
+        //System.out.println(parser.evaluateExpression(equation)); // todo: make non-static: variables can be changed
     }
 }

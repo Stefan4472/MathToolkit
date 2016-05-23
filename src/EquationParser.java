@@ -34,6 +34,8 @@ public class EquationParser {
         functions.add("acsc");
         functions.add("cot");
         functions.add("acot");
+        functions.add("Number");
+        functions.add("Vector");
         return functions;
     }
 
@@ -46,9 +48,18 @@ public class EquationParser {
     // and calls evaluateExpression() on the expression inside the parenthesis
     // The evaluated amount in the parenthesis is then plugged into the equation
     // Runs to the end of the equation
-    public String evaluateExpression(String equation) {
+    public String evaluateExpression(String equation) { // todo: make sure equation is valid. throw more exceptions
+        // remove all whitespace
+        equation = equation.replaceAll("\\s", "");
         System.out.println(equation);
         for (int i = 0; i < equation.length(); i++) {
+            if (equation.charAt(i) == '=') { // found an equals sign - set previous token equal to evaluated result of everything to the right of the equalsign
+                String variable = getPreviousToken(equation, i - 1);
+                String result = evaluateExpression(equation.substring(equation.indexOf('=') + 1));
+                variables.put(variable, MathObject.parseMathObject(result));
+                System.out.println(result + " put in variable " + variable);
+                return result;
+            }
             if (equation.charAt(i) == '(') { // found a parenthesis - look for the whole expression inside
                 // parenthesis will start at i and end at i + j
                 int openings = 1, closings = 0, j = 0;
@@ -83,6 +94,10 @@ public class EquationParser {
         LinkedList<String> tokens = new LinkedList<>();
         for (int i = 0; i < expression.length(); i++) {
             String next_token = getToken(expression, i);
+            // handle vectors and numbers: put whole thing into a token
+            if (next_token.equals("Vector") || next_token.equals("Number")) {
+                next_token += expression.substring(expression.indexOf("(", i), expression.indexOf(")", i) + 1);
+            }
             i += next_token.length() - 1;
             tokens.add(next_token);
         }
@@ -103,7 +118,7 @@ public class EquationParser {
             } else {
                 // order of operations
                 int operation_index = 1;
-                if (tokens.contains("*")) { // todo: ^
+                if (tokens.contains("*")) {
                     operation_index = tokens.indexOf("*");
                 } else if (tokens.contains("/")) {
                     operation_index = tokens.indexOf("/");
@@ -233,7 +248,11 @@ public class EquationParser {
                 return ((new Number(1.0)).divide(MathObject.atan(args.get(0)))).toString();
             case "setEqual":
                 // create or set variable
-
+                break;
+            case "Number":
+                return args.get(0).toString();
+            case "Vector":
+                return Vector.initVector(args).toString();
         }
         return "";
     }
@@ -248,7 +267,7 @@ public class EquationParser {
         boolean is_number = isPartOfNumber(equation.charAt(startIndex));
         for (int j = startIndex + 1; j < equation.length(); j++) {
             if (equation.charAt(j) == '+' || equation.charAt(j) == '-' || equation.charAt(j) == '*'
-                    || equation.charAt(j) == '/' || equation.charAt(j) == '*') {
+                    || equation.charAt(j) == '/' || equation.charAt(j) == '*' || equation.charAt(j) == '=') {
                 return token; // stop if an operator has been found
             } else if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
                 token += equation.charAt(j);
@@ -270,7 +289,7 @@ public class EquationParser {
         boolean is_number = isPartOfNumber(equation.charAt(startIndex));
         for (int j = startIndex - 1; j >= 0; j--) {
             if (equation.charAt(j) == '+' || equation.charAt(j) == '-' || equation.charAt(j) == '*'
-                    || equation.charAt(j) == '/' || equation.charAt(j) == '*') {
+                    || equation.charAt(j) == '/' || equation.charAt(j) == '*' || equation.charAt(j) == '=') {
                 return token; // stop if an operator has been found
             } else if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
                 token = equation.charAt(j) + token;
