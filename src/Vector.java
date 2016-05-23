@@ -74,7 +74,7 @@ public class Vector extends MathObject {
         } else {
             Vector sum = new Vector();
             for (int i = 0; i < size(); i++) {
-                sum.add(getElement(i).add(to_add.getElement(i)));
+                sum.addElement(getElement(i).add(to_add.getElement(i)));
             }
             return sum;
         }

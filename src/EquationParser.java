@@ -254,9 +254,6 @@ public class EquationParser {
                 return ((new Number(1.0)).divide(MathObject.tan(args.get(0)))).toString();
             case "acot":
                 return ((new Number(1.0)).divide(MathObject.atan(args.get(0)))).toString();
-            case "setEqual":
-                // create or set variable
-                break;
             case "Number":
                 return args.get(0).toString();
             case "Vector":
@@ -271,11 +268,14 @@ public class EquationParser {
     // if lookBehind is false, it will look forwards =
     private String getToken(String equation, int startIndex) { // todo: negative numbers
         String token = Character.toString(equation.charAt(startIndex));
+        // return immediately if first char is an operator
+        if (isOperator(equation.charAt(startIndex))) {
+            return token;
+        }
         // establish whether we will be parsing a number or not
         boolean is_number = isPartOfNumber(equation.charAt(startIndex));
         for (int j = startIndex + 1; j < equation.length(); j++) {
-            if (equation.charAt(j) == '+' || equation.charAt(j) == '-' || equation.charAt(j) == '*'
-                    || equation.charAt(j) == '/' || equation.charAt(j) == '*' || equation.charAt(j) == '=') {
+            if (isOperator(equation.charAt(j))) {
                 return token; // stop if an operator has been found
             } else if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
                 token += equation.charAt(j);
@@ -293,12 +293,16 @@ public class EquationParser {
     // the previous complete token and returns it
     private String getPreviousToken(String equation, int startIndex) { // todo: return instantly when you hit an operator
         String token = Character.toString(equation.charAt(startIndex));
+        // stop immediately if operator has been found
+        if (isOperator(equation.charAt(startIndex))) {
+            return token;
+        }
         // establish whether we will be parsing a number or not
         boolean is_number = isPartOfNumber(equation.charAt(startIndex));
         for (int j = startIndex - 1; j >= 0; j--) {
-            if (equation.charAt(j) == '+' || equation.charAt(j) == '-' || equation.charAt(j) == '*'
-                    || equation.charAt(j) == '/' || equation.charAt(j) == '*' || equation.charAt(j) == '=') {
-                return token; // stop if an operator has been found
+            // stop if an operator has been found
+            if (isOperator(equation.charAt(j))) {
+                return token;
             } else if (isPartOfNumber(equation.charAt(j)) == is_number && equation.charAt(j) != '(') { // continue collecting token
                 token = equation.charAt(j) + token;
                 if (functions.contains(token)) { // todo
@@ -314,5 +318,10 @@ public class EquationParser {
     // returns whether char is a digit or decimal point
     private static boolean isPartOfNumber(char c) {
         return (c >= '0' && c <= '9') || c == '.';
+    }
+
+    // returns whether char is one of the recognized operator characters
+    private static boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '*' || c == '=';
     }
 }
