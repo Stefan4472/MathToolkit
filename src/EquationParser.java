@@ -187,19 +187,20 @@ public class EquationParser {
         if (obj2_negative) {
             obj_2 = obj_2.negative();
         }
-        if (operation.equals("+")) {
-            return (obj_1.add(obj_2)).toString();
-        } else if (operation.equals("-")) {
-            return (obj_1.subtract(obj_2)).toString();
-        } else if (operation.equals("*")) {
-            return (obj_1.multiply(obj_2)).toString();
-        } else if (operation.equals("/")) {
-            return (obj_1.divide(obj_2)).toString();
-        } else if (operation.equals("^")) { // todo: check if this is correct: 3^-1 = 0 ??
-            return (obj_1.powerOf(obj_2)).toString();
-        } else { // todo: throw exception?
-            System.out.println("Invalid Operator " + operation);
-            return "";
+        switch (operation) {
+            case "+":
+                return (obj_1.add(obj_2)).toString();
+            case "-":
+                return (obj_1.subtract(obj_2)).toString();
+            case "*":
+                return (obj_1.multiply(obj_2)).toString();
+            case "/":
+                return (obj_1.divide(obj_2)).toString();
+            case "^":  // todo: check if this is correct: 3^-1 = 0 ??
+                return (obj_1.powerOf(obj_2)).toString();
+            default: // todo: throw exception?
+                System.out.println("Invalid Operator " + operation);
+                return "";
         }
     }
 

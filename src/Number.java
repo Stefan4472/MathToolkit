@@ -95,6 +95,9 @@ public class Number extends MathObject {
 
     @Override
     public MathObject multiply(MathObject toMultiply) {
+        if (toMultiply instanceof Vector) {
+            return toMultiply.multiply(this);
+        }
         Number toMultiply_cast = (Number) toMultiply;
         double result = getValue() * toMultiply_cast.getValue();
         boolean result_isInt = (isInt() && toMultiply_cast.isInt() ? true : false);
