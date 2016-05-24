@@ -47,10 +47,8 @@ public class PersistentData {
             buffered_reader.close();
             return true;
         } catch(FileNotFoundException e) {
-            e.printStackTrace();
             return false;
         } catch(IOException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -68,7 +66,6 @@ public class PersistentData {
             bufferedWriter.close();
             return true;
         } catch(IOException e) {
-            e.printStackTrace();
             return false;
         }
     }

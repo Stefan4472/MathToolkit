@@ -64,7 +64,7 @@ public class Main {
                 PersistentData.setStorageFilePath(save_file);
                 saveVariables = true;
             } else {
-                System.out.println("A save file can always be specified at startup or using the command ");
+                System.out.println("A save file can always be specified at startup or using the command <config>");
             }
         }
         if (save_file != null) {
@@ -78,9 +78,10 @@ public class Main {
                 String user_input = scanner.nextLine();
                 if (user_input.equals("y")) {
                     save_file = createSaveFile();
+                    PersistentData.setStorageFilePath(save_file);
                     saveVariables = true;
                 } else {
-                    System.out.println("A save file can always be specified at startup or using the command ");
+                    System.out.println("A save file can always be specified at startup or using the command <config>");
                     saveVariables = false;
                 }
             }
@@ -144,8 +145,9 @@ public class Main {
                             "\tNumbers can also be notated with the prefix 'Number(' and the suffix ')' e.g. 'Number(123)'\n" +
                             "\tVectors are notated with the prefix 'Vector(' and the suffix ')' and contain comma-separated\n\tvalues with the elements e.g. 'Vector(1,2,3)'\n"
             );
+        } else {
+            System.out.println("Waiting on equation or command...");
         }
-
     }
 
     private static void printAbout() {
