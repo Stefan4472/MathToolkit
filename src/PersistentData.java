@@ -40,7 +40,9 @@ public class PersistentData {
             FileReader file_reader = new FileReader(file);
             BufferedReader buffered_reader = new BufferedReader(file_reader);
             while((line = buffered_reader.readLine()) != null) {
-                parser.evaluateExpression(line);
+                try {
+                    parser.evaluateExpression(line);
+                } catch (Exception e) {}
             }
             buffered_reader.close();
             return true;

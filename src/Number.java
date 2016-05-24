@@ -39,6 +39,7 @@ public class Number extends MathObject {
         boolean decimal_found = false;
         boolean negative_found = false;
         double value = 0;
+        System.out.print("Number to parse is " + s);
         // handle case string is in the form "Number()"
         if (s.startsWith("Number(") && s.endsWith(")")) {
             s = s.substring(s.indexOf("(") + 1, s.indexOf(")"));
@@ -56,6 +57,7 @@ public class Number extends MathObject {
                     throw new NumberFormatException("String to parse contains two decimal points");
                 } else {
                     decimal_found = true;
+                    decimal_place = 1;
                 }
             } else if (s.charAt(i) == '-') {
                 if (negative_found) {
@@ -70,6 +72,7 @@ public class Number extends MathObject {
         if (negative_found) {
             value *= -1;
         }
+        System.out.print(" and value is " + value);
         if (decimal_found) {
             return new Number(value);
         } else {
@@ -121,7 +124,7 @@ public class Number extends MathObject {
     public MathObject powerOf(MathObject exponent) {
         Number toExponent_cast = (Number) exponent;
         double result = Math.pow(getValue(), toExponent_cast.getValue());
-        boolean result_isInt = (isInt() && toExponent_cast.isInt() ? true : false);
+        boolean result_isInt = (result == Math.floor(result));
         return new Number(result, result_isInt);
     }
 
@@ -137,7 +140,7 @@ public class Number extends MathObject {
     public MathObject sqrt() {
         double result = Math.sqrt(this.getValue());
         // check if result is an int
-        if (result == (int) result) {
+        if (result == Math.floor(result)) {
             return new Number(result, true);
         } else {
             return new Number(result, false);

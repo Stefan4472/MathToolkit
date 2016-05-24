@@ -31,12 +31,17 @@ public class Main {
             } else if (user_input.equals("about")) {
                 printAbout();
             } else {
-                String result = parser.evaluateExpression(user_input);
-                System.out.print(">> " + result + "\n");
+                try {
+                    String result = parser.evaluateExpression(user_input);
+                    System.out.print(">> " + result + "\n");
+                } catch (Exception e) {
+                    System.out.println(">> An error occurred");
+                    e.printStackTrace();
+                }
 
             }
         }
-        // todo: Look at arithmetic issues, check lots of digits being created
+        // todo: Look at arithmetic issues, check lots of digits being created. issues with user input "y" "n"
         //String equation = "5+(2+4*(2+3))*(6*8)"; // answer: 1061
         //String equation = "5+3*cos(5-5)+3*sin(zero)";
         //String equation = "3^(1+-2)";
@@ -53,7 +58,8 @@ public class Main {
         if (save_file == null) {
             // set up variable storage
             System.out.print("No save file was found. Create a save file to store any created variables? (y/n)");
-            if (scanner.next().equals("y")) {
+            String user_input = scanner.nextLine();
+            if (user_input.equals("y")) {
                 save_file = createSaveFile();
                 PersistentData.setStorageFilePath(save_file);
                 saveVariables = true;
@@ -69,7 +75,8 @@ public class Main {
             } else {
                 System.out.println("Error importing variables from " + save_file.getPath() + ". The file did not exist or could not be opened");
                 System.out.print("Create new save file? (y/n)");
-                if (scanner.next().equals("y")) {
+                String user_input = scanner.nextLine();
+                if (user_input.equals("y")) {
                     save_file = createSaveFile();
                     saveVariables = true;
                 } else {
@@ -87,10 +94,11 @@ public class Main {
         boolean keep_looping;
         do {
             System.out.print("Enter file path to create new save file: ");
-            save_file = new File(scanner.next());
+            save_file = new File(scanner.nextLine());
             if (save_file.exists()) {
                 System.out.print("The specified file already exists. The file may be overwritten if you continue. Use anyway? (y/n)");
-                if (scanner.next().equals("n")) {
+                String user_input = scanner.nextLine();
+                if (user_input.equals("n")) {
                     keep_looping = true;
                 } else {
                     keep_looping = false;
@@ -111,7 +119,8 @@ public class Main {
                         "\texit      Saves variables if a savefile is specified and exits the program\n\n" +
                         "Commands are case-sensitive. Read documentation? (y/n) "
         );
-        if (scanner.next().equals("y")) {
+        String user_input = scanner.nextLine();
+        if (user_input.equals("y")) {
             System.out.print(
                     "\n\nUsing the Toolkit:\n" +
                             "\tOnce the toolkit is running it will accept expressions or equations to evaluate. Simply\n" +
@@ -157,12 +166,14 @@ public class Main {
         if (save_file == null) {
             System.out.println("There is no save file currently in use. That means any created variables will be lost when the program exits.\n");
             System.out.print("Create save file? (y/n) ");
-            if (scanner.next().equals("y")) {
+            String user_input = scanner.nextLine();
+            if (user_input.equals("y")) {
                 createSaveFile();
             }
         } else {
             System.out.print("Current save file is " + save_file.getPath() + ". Create new save file? (y/n) ");
-            if (scanner.next().equals("y")) {
+            String user_input = scanner.nextLine();
+            if (user_input.equals("y")) {
                 createSaveFile();
             }
         }

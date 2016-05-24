@@ -97,7 +97,6 @@ public class EquationParser {
         LinkedList<String> tokens = new LinkedList<>();
         for (int i = 0; i < expression.length(); i++) {
             String next_token = getToken(expression, i);
-            System.out.println("Next token is " + next_token);
             // handle vectors and numbers: put whole thing into a token
             if (next_token.equals("Vector") || next_token.equals("Number")) {
                 next_token += expression.substring(expression.indexOf("(", i), expression.indexOf(")", i) + 1);
@@ -160,10 +159,10 @@ public class EquationParser {
     }
 
     // applies the given operation to two tokens
-    private String applyOperation(String token1, String operation, String token2) {
+    private String applyOperation(String token1, String operation, String token2) throws ArithmeticException {
         MathObject obj_1, obj_2;
         boolean obj1_negative = false, obj2_negative = false;
-        if (token1.charAt(0) == '-') { // todo: handle negatives
+        if (token1.charAt(0) == '-') { // handle negatives
             token1 = token1.substring(1);
             obj1_negative = true;
         }
@@ -171,7 +170,7 @@ public class EquationParser {
             token2 = token2.substring(1);
             obj2_negative = true;
         }
-        if (variables.containsKey(token1)) {
+        if (variables.containsKey(token1)) { // check to see if variable
             obj_1 = variables.get(token1);
         } else {
             obj_1 = MathObject.parseMathObject(token1);
@@ -196,11 +195,10 @@ public class EquationParser {
                 return (obj_1.multiply(obj_2)).toString();
             case "/":
                 return (obj_1.divide(obj_2)).toString();
-            case "^":  // todo: check if this is correct: 3^-1 = 0 ??
+            case "^":
                 return (obj_1.powerOf(obj_2)).toString();
-            default: // todo: throw exception?
-                System.out.println("Invalid Operator " + operation);
-                return "";
+            default:
+                throw new ArithmeticException("Invalid Operator " + operation);
         }
     }
 
