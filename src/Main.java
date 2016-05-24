@@ -41,7 +41,7 @@ public class Main {
 
             }
         }
-        // todo: Look at arithmetic issues, check lots of digits being created. issues with user input "y" "n"
+        // todo: issues with user input "y" "n", numberformatexceptions in Number and Vector classes
         //String equation = "5+(2+4*(2+3))*(6*8)"; // answer: 1061
         //String equation = "5+3*cos(5-5)+3*sin(zero)";
         //String equation = "3^(1+-2)";
@@ -64,7 +64,7 @@ public class Main {
                 PersistentData.setStorageFilePath(save_file);
                 saveVariables = true;
             } else {
-                System.out.println("A save file can always be specified at startup or using the command "); // todo: command
+                System.out.println("A save file can always be specified at startup or using the command ");
             }
         }
         if (save_file != null) {

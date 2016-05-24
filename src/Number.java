@@ -1,12 +1,23 @@
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  * Allows for parsing between Strings and values and keeps track of significant figures
  */
 public class Number extends MathObject {
 
     // stored value of the number
-    private double value; // todo: store as long or as String
+    private double value;
     // whether Number represents an integer or not (i.e. a decimal)
     private boolean isInt;
+    // decimal format--round to 10 places
+    private static DecimalFormat decimalFormat = getDecimalFormat();
+
+    private static DecimalFormat getDecimalFormat() {
+        DecimalFormat format = new DecimalFormat("#.###############");
+        format.setRoundingMode(RoundingMode.CEILING);
+        return format;
+    }
 
     public double getValue() {
         return value;
@@ -81,7 +92,7 @@ public class Number extends MathObject {
     }
 
     @Override
-    public MathObject add(MathObject toAdd) { // todo: error-handling, what if it's not an instance of Number?
+    public MathObject add(MathObject toAdd) throws NumberFormatException { // todo: error-handling, what if it's not an instance of Number?
         Number toAdd_cast = (Number) toAdd;
         double result = getValue() + toAdd_cast.getValue();
         boolean result_isInt = (isInt() && toAdd_cast.isInt() ? true : false);
@@ -152,7 +163,7 @@ public class Number extends MathObject {
         if (isInt) {
             return Integer.toString((int) value);
         } else {
-            return Double.toString(value);
+            return decimalFormat.format(value);
         }
     }
 
