@@ -50,7 +50,6 @@ public class Number extends MathObject {
         boolean decimal_found = false;
         boolean negative_found = false;
         double value = 0;
-        System.out.print("Number to parse is " + s);
         // handle case string is in the form "Number()"
         if (s.startsWith("Number(") && s.endsWith(")")) {
             s = s.substring(s.indexOf("(") + 1, s.indexOf(")"));
@@ -83,7 +82,6 @@ public class Number extends MathObject {
         if (negative_found) {
             value *= -1;
         }
-        System.out.print(" and value is " + value);
         if (decimal_found) {
             return new Number(value);
         } else {
@@ -92,38 +90,53 @@ public class Number extends MathObject {
     }
 
     @Override
-    public MathObject add(MathObject toAdd) throws NumberFormatException { // todo: error-handling, what if it's not an instance of Number?
-        Number toAdd_cast = (Number) toAdd;
-        double result = getValue() + toAdd_cast.getValue();
-        boolean result_isInt = (isInt() && toAdd_cast.isInt() ? true : false);
-        return new Number(result, result_isInt);
+    public MathObject add(MathObject toAdd) throws IllegalArgumentException { // todo: error-handling, what if it's not an instance of Number?
+        if (toAdd instanceof Number) {
+            Number toAdd_cast = (Number) toAdd;
+            double result = getValue() + toAdd_cast.getValue();
+            boolean result_isInt = (isInt() && toAdd_cast.isInt() ? true : false);
+            return new Number(result, result_isInt);
+        } else {
+            throw new IllegalArgumentException("Objects are of different types and cannot be added");
+        }
     }
 
     @Override
-    public MathObject subtract(MathObject toSubtract) {
-        Number toSubtract_cast = (Number) toSubtract;
-        double result = getValue() - toSubtract_cast.getValue();
-        boolean result_isInt = (isInt() && toSubtract_cast.isInt() ? true : false);
-        return new Number(result, result_isInt);
+    public MathObject subtract(MathObject toSubtract) throws IllegalArgumentException {
+        if (toSubtract instanceof Number) {
+            Number toSubtract_cast = (Number) toSubtract;
+            double result = getValue() - toSubtract_cast.getValue();
+            boolean result_isInt = (isInt() && toSubtract_cast.isInt() ? true : false);
+            return new Number(result, result_isInt);
+        } else {
+            throw new IllegalArgumentException("Objects are of different types and cannot be subtracted");
+        }
     }
 
     @Override
-    public MathObject multiply(MathObject toMultiply) {
+    public MathObject multiply(MathObject toMultiply) throws IllegalArgumentException {
         if (toMultiply instanceof Vector) {
             return toMultiply.multiply(this);
+        } else if (toMultiply instanceof Number) {
+            Number toMultiply_cast = (Number) toMultiply;
+            double result = getValue() * toMultiply_cast.getValue();
+            boolean result_isInt = (result == Math.floor(result) ? true : false);
+            return new Number(result, result_isInt);
+        } else {
+            throw new IllegalArgumentException("Objects cannot be multiplied");
         }
-        Number toMultiply_cast = (Number) toMultiply;
-        double result = getValue() * toMultiply_cast.getValue();
-        boolean result_isInt = (isInt() && toMultiply_cast.isInt() ? true : false);
-        return new Number(result, result_isInt);
     }
 
     @Override
-    public MathObject divide(MathObject toDivide) {
-        Number toDivide_cast = (Number) toDivide;
-        double result = getValue() * toDivide_cast.getValue();
-        boolean result_isInt = (isInt() && toDivide_cast.isInt() ? true : false);
-        return new Number(result, result_isInt);
+    public MathObject divide(MathObject toDivide) throws IllegalArgumentException {
+        if (toDivide instanceof Number) {
+            Number toDivide_cast = (Number) toDivide;
+            double result = getValue() / toDivide_cast.getValue();
+            boolean result_isInt = (result == Math.floor(result) ? true : false);
+            return new Number(result, result_isInt);
+        } else {
+            throw new IllegalArgumentException("Objects are of different types and cannot be divided");
+        }
     }
 
     @Override
@@ -132,11 +145,15 @@ public class Number extends MathObject {
     }
 
     @Override
-    public MathObject powerOf(MathObject exponent) {
-        Number toExponent_cast = (Number) exponent;
-        double result = Math.pow(getValue(), toExponent_cast.getValue());
-        boolean result_isInt = (result == Math.floor(result));
-        return new Number(result, result_isInt);
+    public MathObject powerOf(MathObject exponent) throws IllegalArgumentException {
+        if (exponent instanceof Number) {
+            Number toExponent_cast = (Number) exponent;
+            double result = Math.pow(getValue(), toExponent_cast.getValue());
+            boolean result_isInt = (result == Math.floor(result));
+            return new Number(result, result_isInt);
+        } else {
+            throw new IllegalArgumentException("Objects are of different types and do not support exponents");
+        }
     }
 
     @Override

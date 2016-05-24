@@ -159,7 +159,7 @@ public class EquationParser {
     }
 
     // applies the given operation to two tokens
-    private String applyOperation(String token1, String operation, String token2) throws ArithmeticException {
+    private String applyOperation(String token1, String operation, String token2) throws IllegalArgumentException {
         MathObject obj_1, obj_2;
         boolean obj1_negative = false, obj2_negative = false;
         if (token1.charAt(0) == '-') { // handle negatives
@@ -198,14 +198,14 @@ public class EquationParser {
             case "^":
                 return (obj_1.powerOf(obj_2)).toString();
             default:
-                throw new ArithmeticException("Invalid Operator " + operation);
+                throw new IllegalArgumentException("Invalid Operator " + operation);
         }
     }
 
     // applies function
     // cos(3+4) -> function = "cos" args = "3+4"
     // returns token of evaluated function
-    private String applyFunction(String function, String content) {
+    private String applyFunction(String function, String content) throws IllegalArgumentException {
         // break apart any comma-separated arguments, evaluating each one in succession
         // and parsing to MathObject
         // this ensures each argument is simplified and allows nested operations to occur
@@ -256,15 +256,16 @@ public class EquationParser {
                 return args.get(0).toString();
             case "Vector":
                 return Vector.initVector(args).toString();
+            default:
+                throw new IllegalArgumentException("Function " + function + " is not supported");
         }
-        return "";
     }
 
     // starting at startIndex of equation parses out
     // the next complete token and returns it
     // if lookBehind is true, it will look backwards (the token however will not be backwards)
     // if lookBehind is false, it will look forwards =
-    private String getToken(String equation, int startIndex) { // todo: negative numbers
+    private String getToken(String equation, int startIndex) {
         String token = Character.toString(equation.charAt(startIndex));
         // return immediately if first char is an operator
         if (isOperator(equation.charAt(startIndex))) {

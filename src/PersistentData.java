@@ -63,7 +63,7 @@ public class PersistentData {
             HashMap<String, MathObject> variables = parser.getVariables();
             for (String key : variables.keySet()) {
                 MathObject variable = variables.get(key);
-                bufferedWriter.write(variable.getId() + "=" + variable.toString() + "\n");
+                bufferedWriter.write(key + "=" + variable.toString() + "\n");
             }
             bufferedWriter.close();
             return true;
